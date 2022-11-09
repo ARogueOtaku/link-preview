@@ -2,6 +2,9 @@ let abortController = null;
 let previousTag = null;
 let isFetching = false;
 
+const ogAPIURL = `https://ogextractor.netlify.app/.netlify/functions/ogExtractionHandler?url=`;
+const placeHolderImageURL = `https://raw.githubusercontent.com/ARogueOtaku/link-preview/master/assets/placeholder.png`;
+
 //Popup Container Creation and Styles
 const popupContainer = document.createElement("div");
 popupContainer.style.position = "fixed";
@@ -35,7 +38,7 @@ image.style.height = "180px";
 image.style.objectFit = "fill";
 imageContainer.appendChild(image);
 popupContainer.appendChild(imageContainer);
-const loadNewImage = (src = "../assets/placeholder.png") => {
+const loadNewImage = (src = placeHolderImageURL) => {
   image.style.visibility = "hidden";
   const tempImg = new Image();
   tempImg.addEventListener("load", () => {
@@ -46,6 +49,7 @@ const loadNewImage = (src = "../assets/placeholder.png") => {
   tempImg.src = src;
 };
 
+//Content Creation and Styles
 const contentContainer = document.createElement("div");
 contentContainer.style.marginTop = "15px";
 contentContainer.style.marginRight = "10px";
@@ -181,11 +185,12 @@ document.body.addEventListener("mouseover", async (e) => {
       showPopupContainer();
       repositionPopup(foundTag);
       const ogData = await (
-        await fetch(`https://ogextractor.netlify.app/.netlify/functions/ogExtractionHandler?url=${foundTag.href}`, {
+        await fetch(`${ogAPIURL}${foundTag.href}`, {
           signal: abortController.signal,
         })
       ).json();
       isFetching = false;
+      ogData.title = ogData.title || foundTag.innerText;
       populatePopupData(ogData);
       hidePopupLoader();
     } catch (e) {
