@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Link Preview",
+  "version": "0.1.0",
+  "description": "Generate Link Previews of URL",
+  "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "matches": ["*://*/*"]
+    }
+  ]
+}
